@@ -92,8 +92,8 @@ int main(int argc, char *argv[]) {
     double posX, posY, dirX, dirY, planeX, planeY;
     SDL_Event event;
     int quit = 0;
-    double moveSpeed = 0.5;  // Augmentation de la vitesse de mouvement
-    double rotSpeed = 0.05;
+    double moveSpeed = 0.5;  // Ajustement de la vitesse de déplacement
+    double rotSpeed = 0.1;  // Ajustement de la vitesse de rotation
 
     (void)argc;
     (void)argv;
@@ -128,6 +128,7 @@ int main(int argc, char *argv[]) {
     floorRect.w = 800;
     floorRect.h = 300;
 
+    // Position initiale du joueur
     posX = 2.5;
     posY = 2.5;
     dirX = -1.0;
@@ -162,20 +163,24 @@ int main(int argc, char *argv[]) {
                         planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
                         break;
                     case SDLK_z:  // Avancer
-                        posX += dirX * moveSpeed;
-                        posY += dirY * moveSpeed;
+                        // Gestion des collisions avec une marge de 0.1 pour éviter de "coller" les murs
+                        if(map[(int)(posX + dirX * moveSpeed * 2)][(int)posY] == 0) posX += dirX * moveSpeed;
+                        if(map[(int)posX][(int)(posY + dirY * moveSpeed * 2)] == 0) posY += dirY * moveSpeed;
                         break;
                     case SDLK_s:  // Reculer
-                        posX -= dirX * moveSpeed;
-                        posY -= dirY * moveSpeed;
+                        // Gestion des collisions avec une marge de 0.1 pour reculer
+                        if(map[(int)(posX - dirX * moveSpeed * 2)][(int)posY] == 0) posX -= dirX * moveSpeed;
+                        if(map[(int)posX][(int)(posY - dirY * moveSpeed * 2)] == 0) posY -= dirY * moveSpeed;
                         break;
                     case SDLK_q:  // Déplacer à gauche
-                        posX -= dirY * moveSpeed;
-                        posY += dirX * moveSpeed;
+                        // Gestion des collisions pour déplacement à gauche
+                        if(map[(int)(posX - dirY * moveSpeed * 2)][(int)posY] == 0) posX -= dirY * moveSpeed;
+                        if(map[(int)posX][(int)(posY + dirX * moveSpeed * 2)] == 0) posY += dirX * moveSpeed;
                         break;
                     case SDLK_d:  // Déplacer à droite
-                        posX += dirY * moveSpeed;
-                        posY -= dirX * moveSpeed;
+                        // Gestion des collisions pour déplacement à droite
+                        if(map[(int)(posX + dirY * moveSpeed * 2)][(int)posY] == 0) posX += dirY * moveSpeed;
+                        if(map[(int)posX][(int)(posY - dirX * moveSpeed * 2)] == 0) posY -= dirX * moveSpeed;
                         break;
                 }
             }
